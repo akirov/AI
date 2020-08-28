@@ -1,0 +1,17 @@
+.eclipse/
+.settings/
+.idea/
+.project
+.cproject
+.depend
+*.o
+*.a
+*.exe
+*.pkl
+checkpoint
+*.index
+*.meta
+*.data-00000-of-00001
+__pycache__/
+images/
+data/
