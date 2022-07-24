@@ -11,6 +11,12 @@
 # limitations under the License.
 
 import tensorflow as tf
+# If "failed to run cuBLAS routine: CUBLAS_STATUS_EXECUTION_FAILED" error, try:
+#tf_config = tf.ConfigProto()
+#tf_config.gpu_options.polling_inactive_delay_msecs = 10
+#tf_config.gpu_options.per_process_gpu_memory_fraction = 0.9  # maximum alloc 90% of gpu mem
+#tf_config.gpu_options.allow_growth = True  # allocate memory dynamically
+
 import os
 import math
 
@@ -21,9 +27,14 @@ mnist = input_data.read_data_sets("../data/", one_hot=True, reshape=False)
 # image being the digit itself i.e. "4", it is a vector with "one hot" node and all
 # the other nodes being zero i.e. [0, 0, 0, 0, 1, 0, 0, 0, 0, 0].
 
-# Or, to suppress TF warning do:
+# Or use tensorflow_datasets:
+#import tensorflow_datasets as tfds
+#mnist = tfds.load(name="mnist", split=tfds.Split.TRAIN)
+
+# Or do this:
 #mnist = tf.keras.datasets.mnist
 #(X_train, y_train), (X_test, y_test) = mnist.load_data()
+# Need to convert labels to one-hot: tf.keras.utils.to_categorical()
 
 
 # Declare the training data placeholders
@@ -133,7 +144,8 @@ from timeit import default_timer as timer
 tstart = timer()
 
 # Start the training session
-with tf.Session() as sess:
+print("*** Start the training session ***")
+with tf.Session() as sess:  # config=tf_config
     imported_graph = None
     if os.path.isfile(os.path.abspath("mnist_tf_cnn_model.meta")):
         imported_graph = tf.train.import_meta_graph(os.path.abspath('mnist_tf_cnn_model.meta'))  # Don't need this probably
@@ -209,8 +221,13 @@ tf.reset_default_graph()
 # Import saved graph. imported_graph is a Saver
 imported_graph = tf.train.import_meta_graph(os.path.abspath('mnist_tf_cnn_model.meta'))
 
+if 'sess' in locals() and sess is not None:
+    print('Closing interactive session')
+    sess.close()
+
 # Run recognition session
-with tf.Session() as sess:
+print("*** Run recognition session ***")
+with tf.Session() as sess:  # config=tf_config
     # Restore saved variables
     imported_graph.restore(sess, os.path.abspath("mnist_tf_cnn_model"))
     output_tensor = sess.graph.get_tensor_by_name('output:0')

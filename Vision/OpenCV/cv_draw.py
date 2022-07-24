@@ -40,7 +40,7 @@ def draw(sx, sy, title='Enter to save. Esc to close', smooth=True):
         return None
     else:
         if smooth:
-            img = cv2.GaussianBlur(img, (5, 5), 0)
+            img = cv2.GaussianBlur(img, (5, 5), 0)  # Or use cv.dilate() ?
         return img
 
 

@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-from sklearn.datasets import fetch_mldata
+from sklearn.datasets import fetch_openml
 from sklearn.model_selection import train_test_split
 import numpy as np
 from sklearn.svm import LinearSVC, SVC
@@ -103,8 +103,8 @@ def evaluate_model(model, X_train, y_train, X_test, y_test):
     plt.show()
 
 
-mnist = fetch_mldata("MNIST original", data_home='../data/')  # gets data from ../data/mldata/mnist-original.mat
-                                                              # or tries to download it
+mnist = fetch_openml('mnist_784', data_home='../data/')  #, version=1, return_X_y=True, as_frame=False
+                                                         # gets data from ../data/ or tries to download it
 X_full = mnist.data
 print("X = mnist.data shape : ", X_full.shape)
 y_full = mnist.target.astype(np.uint8)
@@ -115,7 +115,7 @@ fig, axs = plt.subplots(1, 5)
 fig.suptitle('5 MNIST images with index:label')
 for i in range(5):
   idx = np.random.randint(0,X_full.shape[0])
-  img = (np.reshape(X_full[idx], (28, 28))).astype(np.uint8)
+  img = (np.reshape(X_full.to_numpy()[idx], (28, 28))).astype(np.uint8)
   axs[i].set_title('{0}:{1}'. format(idx, y_full[idx]))
   axs[i].imshow(img, interpolation='nearest', cmap='gray')  # cmap='binary'
   axs[i].axis('off')
